@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia del Diseño</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Bungee', cursive;
+            background: linear-gradient(to bottom, #000000, #755080);
+            color: #F04194;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header img {
+            width: 300px;
+            height: auto;
+        }
+        .gif-container img {
+            width: 300px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            background-color: #F04194;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .question-container {
+            margin-top: 20px;
+        }
+        .form-check-label {
+            color: #d9ac25;
+        }
+        #time {
+            font-size: 1.2rem;
+            color: white;
+        }
+        .answer-button {
+            width: 50%;
+            padding: 20px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .answer-button:hover {
+            background-color: #FFEDFF;
+            color: #000000;
+        }
+
+        .correct {
+            background-color: #28a745;
+        }
+        .incorrect {
+            background-color: #dc3545;
+        }
+
+        .check-icon, .x-icon {
+            font-size: 20px;
+            color: white;
+            margin-left: 10px;
+        }
+
+        #time-up-message {
+            color: #dc3545;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+    <script>
+        let timer;
+        let timeLeft = 30;
+        let comodinCount = localStorage.getItem("comodinCount") ? parseInt(localStorage.getItem("comodinCount")) : 2;
+
+        function startTimer() {
+            timer = setInterval(function() {
+                document.getElementById("time").innerText = "Tiempo restante: " + timeLeft + " segundos";
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById("time-up-message").style.display = "block";
+                    document.getElementById("time-up-message").innerText = "¡Tiempo agotado! La página se redirigirá ahora.";
+                    setTimeout(function() {
+                        window.location.href = "Avanzado.html";
+                    }, 3000);
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        function handleAnswer(isCorrect, buttonId) {
+    let button = document.getElementById(buttonId);
+    let audio = isCorrect ? new Audio('correct.mp3') : new Audio('incorrect.mp3');
+    
+    if (isCorrect) {
+        button.classList.add('correct');
+        button.innerHTML += ' <span class="check-icon">\u2714</span>';
+
+        let currentScore = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+        currentScore += 20; // Cada respuesta correcta vale 20 puntos
+        localStorage.setItem('score', currentScore);
+    } else {
+        button.classList.add('incorrect');
+        button.innerHTML += ' <span class="x-icon">\u2718</span>';
+    }
+
+    // Reproduce el audio y espera a que termine antes de redirigir
+    audio.play();
+    audio.addEventListener('ended', function () {
+        window.location.href = "Avanzado.html";
+    });
+}
+
+        function useComodin() {
+            if (comodinCount > 0) {
+                let incorrectAnswers = document.querySelectorAll('.answer-button:not(.correct-answer)');
+                let removedCount = 0;
+
+                while (removedCount < 2 && incorrectAnswers.length > 0) {
+                    let randomIndex = Math.floor(Math.random() * incorrectAnswers.length);
+                    incorrectAnswers[randomIndex].style.display = 'none';
+                    incorrectAnswers = Array.from(incorrectAnswers).filter((_, i) => i !== randomIndex);
+                    removedCount++;
+                }
+
+                comodinCount--;
+                localStorage.setItem("comodinCount", comodinCount);
+                document.getElementById("comodin-button").innerText = `Usar Comodín (${comodinCount} restantes)`;
+
+                if (comodinCount === 0) {
+                    document.getElementById("comodin-button").disabled = true;
+                }
+            }
+        }
+
+        window.onload = function() {
+            startTimer();
+            document.getElementById("comodin-button").innerText = `Usar Comodín (${comodinCount} restantes)`;
+            if (comodinCount === 0) {
+                document.getElementById("comodin-button").disabled = true;
+            }
+        };
+    </script>
+</head>
+<body>
+    <header class="py-4">
+        <div class="gif-container">
+            <img src="Images/Mapache Pensativa.gif" alt="GIF Animado">
+        </div>
+    </header>
+
+    <div class="content">
+        <div id="time">Tiempo restante: 30 segundos</div>
+
+        <div class="question-container">
+            <div class="title mt-3">¿En qué corriente artística se destacan figuras surrealistas como Salvador Dalí y René Magritte, quienes desafían la lógica y la percepción de la realidad?</div>
+            <button id="button1" class="answer-button" onclick="handleAnswer(false, 'button1')">a) Expresionismo</button>
+            <button id="button3" class="answer-button" onclick="handleAnswer(false, 'button3')">b) Realismo</button>
+            <button id="button2" class="answer-button correct-answer" onclick="handleAnswer(true, 'button2')">c) Surrealismo</button>
+            <button id="button4" class="answer-button" onclick="handleAnswer(false, 'button4')">d) Fauvismo</button>
+        </div>
+
+        <!-- Botón para usar el comodín -->
+        <button id="comodin-button" class="mt-3" onclick="useComodin()">Usar Comodín (2 restantes)</button>
+
+        <div id="time-up-message"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Bungee', cursive;
+            background: linear-gradient(to bottom, #000000, #755080);
+            color: #F04194;
+            text-align: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Bungee', cursive;
+            font-size: 3rem;
+            color: #d9ac25;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .result {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .gold {
+            background-color: #ffd700;
+            color: #000;
+        }
+
+        .silver {
+            background-color: #c0c0c0;
+            color: #000;
+        }
+
+        .bronze {
+            background-color: #cd7f32;
+            color: #fff;
+        }
+
+        .loser {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .gif-container {
+            margin-top: 30px;
+        }
+
+        .gif-container img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-primary {
+            background-color: #F04194;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #FF69B4;
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Resultados de la Trivia!</h1>
+    <div id="user-name" class="mb-4"></div>
+    <div id="result-message" class="result"></div>
+    <div class="gif-container">
+        <img id="result-gif" src="" alt="Resultado GIF">
+    </div>
+    <button onclick="restartQuiz()" class="btn btn-primary mt-4">Reiniciar Quiz</button>
+
+    <script>
+function showResults() {
+    let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+    let userName = localStorage.getItem('nombre') || "Jugador";
+    let message = "";
+    let gifSrc = "";
+
+    document.getElementById('user-name').innerHTML = `<h2>¡Hola, ${userName}!</h2>`;
+
+    if (score >= 100) {
+        message = `<span class="gold">🏆 ¡Felicidades! Obtuviste Oro con ${score} puntos. 🏆</span>`;
+        gifSrc = "Images/Mapache Victoria.gif";
+    } else if (score >= 80) {
+        message = `<span class="silver">🥈 ¡Bien hecho! Obtuviste Plata con ${score} puntos. 🥈</span>`;
+        gifSrc = "Images/Mapache Feliz.gif";
+    } else if (score >= 60) {
+        message = `<span class="bronze">🥉 ¡Buen intento! Obtuviste Bronce con ${score} puntos. 🥉</span>`;
+        gifSrc = "Images/Mapache Tranquila.gif";
+    } else {
+        message = `<span class="loser">💔 ¡Sigue practicando! Eres Perdedor con ${score} puntos. 💔</span>`;
+        gifSrc = "Images/Mapache Triste.gif";
+    }
+
+    document.getElementById('result-message').innerHTML = message;
+    document.getElementById('result-gif').src = gifSrc;
+
+    console.log("Puntaje final:", score); // Depuración
+}
+        function restartQuiz() {
+            localStorage.removeItem('score');
+            localStorage.removeItem('nombre');
+            localStorage.removeItem('comodinCount');
+            window.location.href = "Iniciar.html"; // Redirigir a la primera pregunta
+        }
+
+        window.onload = showResults;
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
